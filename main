@@ -1,0 +1,126 @@
+//jiaxin chen
+//connect 4
+//period 7
+// vector bonus (used google to figure out how it worked)
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+//vertex 
+bool insertToken(vector<vector<char>>& board, int choice, char turn) {
+    int cols = board[0].size();
+    for (int c = 0; c < cols; c++) {
+        if (choice == c + 1) { 
+            for (int r = board.size() - 1; r >= 0; r--) { 
+                if (board[r][c] == ' ') {
+                    board[r][c] = turn;
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+void displayBoard(const vector<vector<char>>& board) {
+    for (int r = 0; r < board.size(); r++) {
+        for (int c = 0; c < board[0].size(); c++) {
+            cout << board[r][c] << "  ";
+        }
+        cout << endl;
+    }
+    for (int i = 1; i <= board[0].size(); i++) {
+        cout << i << "  ";
+    }
+    cout << endl;
+}
+
+//bool for winner cs t/f
+bool checkForWinner(char player, const vector<vector<char>>& board) {
+    int rows = board.size();
+    int cols = board[0].size();
+
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < cols - 3; c++) {
+            if (board[r][c] == player && board[r][c] == board[r][c + 1] && board[r][c] == board[r][c + 2] && board[r][c] == board[r][c + 3]) {
+                return true;
+            }
+        }
+    }
+   
+    for (int r = 0; r < rows - 3; r++) {
+        for (int c = 0; c < cols; c++) {
+            if (board[r][c] == player && board[r][c] == board[r + 1][c] && board[r][c] == board[r + 2][c] && board[r][c] == board[r + 3][c]) {
+                return true;
+            }
+        }
+    }
+
+    for (int r = 0; r < rows - 3; r++) {
+        for (int c = 0; c < cols - 3; c++) {
+            if (board[r][c] == player && board[r][c] == board[r + 1][c + 1] && board[r][c] == board[r + 2][c + 2] && board[r][c] == board[r + 3][c + 3]) {
+                return true;
+            }
+        }
+    }
+
+    for (int r = 3; r < rows; r++) {
+        for (int c = 0; c < cols - 3; c++) {
+            if (board[r][c] == player && board[r][c] == board[r - 1][c + 1] && board[r][c] == board[r - 2][c + 2] && board[r][c] == board[r - 3][c + 3]) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+int main() {
+    int rows, cols;
+    cout << "Enter the number of rows (default 6): ";
+    cin >> rows;
+    cout << "Enter the number of columns (default 7): ";
+    cin >> cols;
+
+    if (rows <= 0) rows = 6;
+    if (cols <= 0) cols = 7;
+
+    vector<vector<char>> board(rows, vector<char>(cols, ' '));
+
+    displayBoard(board);
+
+    int counter = 0;
+    char turn = 'X';
+    int choice;
+    bool gameWon = false;
+
+    while (!gameWon && counter < rows * cols) {
+        if (counter % 2 == 0) {
+            turn = 'X';  
+        } else {
+            turn = 'O';  
+        }
+
+        cout << "\nPlayer " << (turn == 'X' ? "1 (X)" : "2 (O)") << ", choose a column (1 to " << cols << "): ";
+        cin >> choice;
+
+        if (choice < 1 || choice > cols || !insertToken(board, choice, turn)) {
+            cout << "Invalid move, try again!" << endl;
+            continue;
+        }
+
+        displayBoard(board);
+
+        if (checkForWinner(turn, board)) {
+            cout << "Player " << (turn == 'X' ? "1 (X)" : "2 (O)") << " wins!" << endl;
+            gameWon = true;
+        }
+
+        counter++;
+    }
+
+    if (!gameWon) {
+        cout << "The game is a tie!" << endl;
+    }
+}
